@@ -35,6 +35,13 @@ Start-Sleep -Seconds 4
 Write-Host "Waiting for http://localhost:8081 to become available..."
 npx wait-on http://localhost:8081
 
+# open preview in default browser for convenience
+try {
+  Start-Process "http://localhost:8081"
+} catch {
+  Write-Host "Could not automatically open browser. Please open http://localhost:8081 manually."
+}
+
 Write-Host "Running Playwright tests..."
 npm run test:e2e
 

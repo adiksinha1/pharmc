@@ -26,6 +26,15 @@ Write-Host "Starting frontend dev server in a new PowerShell window..."
 Start-Process -FilePath 'powershell' -ArgumentList "-NoExit","-Command","cd '$root'; npm run dev" -WindowStyle Normal
 Start-Sleep -Seconds 4
 
+# wait for dev server and open in browser before running tests
+Write-Host "Waiting for http://localhost:8081 to become available..."
+npx wait-on http://localhost:8081 || (Start-Sleep -Seconds 2; npx wait-on http://localhost:8081)
+try {
+  Start-Process "http://localhost:8081"
+} catch {
+  Write-Host "Could not automatically open browser. Please open http://localhost:8081 manually."
+}
+
 Write-Host "Running Playwright e2e tests (will run against http://localhost:8081)..."
 npm run test:e2e
 

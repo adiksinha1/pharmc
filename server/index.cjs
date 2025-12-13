@@ -51,6 +51,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Simple request logger to aid local debugging
+app.use((req, res, next) => {
+  const now = new Date().toISOString();
+  console.log(`[${now}] ${req.method} ${req.url}`);
+  if (req.method === 'POST') {
+    try {
+      console.log('  body:', JSON.stringify(req.body));
+    } catch (e) {
+      // ignore
+    }
+  }
+  next();
+});
+
 app.post("/api/signup", (req, res) => {
   const { name, email, password } = req.body || {};
   if (!name || !email || !password) return res.status(400).json({ error: "missing" });
