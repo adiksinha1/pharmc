@@ -1,0 +1,7 @@
+medicine_id,name,category,price,stock,expiry_date,supplier
+MED001,Paracetamol,Analgesic,20,500,2026-05-10,Cipla
+MED002,Amoxicillin,Antibiotic,55,200,2025-11-22,Sun Pharma
+MED003,Cetirizine,Antihistamine,15,350,2026-02-18,Dr Reddy's
+MED004,Insulin,Hormone,450,80,2025-09-01,Novo Nordisk
+MED005,Azithromycin,Antibiotic,120,150,2026-01-05,Pfizer
+MED006,Metformin,Antidiabetic,30,300,2026-03-14,Lupin

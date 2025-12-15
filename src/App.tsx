@@ -18,6 +18,7 @@ import ResultsView from "./pages/dashboard/ResultsView";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { AuthProvider } from "./hooks/useAuth";
+import PharmacyData from "./pages/dashboard/PharmacyData";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="insights" element={<VisualInsights />} />
             <Route path="reports" element={<Reports />} />
             <Route path="results" element={<ResultsView />} />
+            <Route path="pharmacy-data" element={<PharmacyData />} />
           </Route>
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
