@@ -1,39 +1,62 @@
-const path = require('path');
-const fs = require('fs');
-const Database = require('better-sqlite3');
+const mysql = require('mysql2/promise');
 
-const DB_PATH = path.join(__dirname, 'data.db');
+const MYSQL_HOST = process.env.MYSQL_HOST;
+const MYSQL_PORT = parseInt(process.env.MYSQL_PORT || '3306', 10);
+const MYSQL_USER = process.env.MYSQL_USER;
+const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || '';
+const MYSQL_DATABASE = process.env.MYSQL_DATABASE;
+const MYSQL_SSL = process.env.MYSQL_SSL === 'true';
 
-function ensureDb() {
-  const dir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  const db = new Database(DB_PATH);
-  db.pragma('journal_mode = WAL');
-  db.prepare(
-    `CREATE TABLE IF NOT EXISTS users (
-      email TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      passwordHash TEXT NOT NULL
-    )`
-  ).run();
-  return db;
+if (!MYSQL_HOST || !MYSQL_USER || MYSQL_PASSWORD === undefined || !MYSQL_DATABASE) {
+  throw new Error('MySQL not configured. Set MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE');
 }
 
-const db = ensureDb();
+let pool;
+async function getPool() {
+  if (pool) return pool;
+  pool = mysql.createPool({
+    host: MYSQL_HOST,
+    port: MYSQL_PORT,
+    user: MYSQL_USER,
+    password: MYSQL_PASSWORD,
+    database: MYSQL_DATABASE,
+    waitForConnections: true,
+    connectionLimit: 10,
+    namedPlaceholders: false,
+    ssl: MYSQL_SSL ? { rejectUnauthorized: false } : undefined,
+  });
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      email VARCHAR(255) PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      password_hash VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  return pool;
+}
 
 module.exports = {
-  getUserByEmail(email) {
-    const row = db.prepare('SELECT email, name, passwordHash FROM users WHERE email = ?').get(email);
-    return row || null;
+  async getUserByEmail(email) {
+    const conn = await getPool();
+    const [rows] = await conn.query(
+      'SELECT email, name, password_hash AS passwordHash FROM users WHERE email = ? LIMIT 1',
+      [email]
+    );
+    return rows && rows[0] ? rows[0] : null;
   },
-  createUser({ email, name, passwordHash }) {
-    const stmt = db.prepare('INSERT INTO users (email, name, passwordHash) VALUES (?, ?, ?)');
+
+  async createUser({ email, name, passwordHash }) {
+    const conn = await getPool();
     try {
-      stmt.run(email, name, passwordHash);
+      await conn.query(
+        'INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)',
+        [email, name, passwordHash]
+      );
       return { email, name };
-    } catch (e) {
-      if (e && e.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') return null;
-      throw e;
+    } catch (err) {
+      if (err && err.code === 'ER_DUP_ENTRY') return null;
+      throw err;
     }
   },
 };

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type User = {
   name: string;
@@ -32,6 +33,7 @@ function writeUsers(obj: Record<string, { name: string; password: string }>) {
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(() => {
     try {
       const raw = localStorage.getItem(CURRENT_KEY);
@@ -49,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (name: string, email: string, password: string) => {
     // Try server API first
     try {
+      console.log('🔄 Attempting signup via server API...');
       const res = await fetch(`${SERVER_BASE}/api/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -56,20 +59,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       if (res.ok) {
         const data = await res.json();
+        console.log('✅ Server signup successful!');
         setUser(data.user);
         return true;
       }
-      // if server returned conflict or other, fallthrough to localStorage fallback
+      // Server reached but rejected (e.g., conflict/validation)
+      const errorData = await res.json().catch(() => ({ error: 'unknown' }));
+      console.error('❌ Signup error from server:', errorData);
+      return false;
     } catch (e) {
-      // server not available, fallback
+      console.warn('⚠️ Server unavailable, using localStorage fallback:', e);
+      // server not available, fallback to localStorage
     }
 
+    console.log('💾 Using localStorage for signup...');
     const users = readUsers();
-    if (users[email]) return false; // already exists
+    console.log('📦 Existing users in localStorage:', Object.keys(users));
+    
+    if (users[email]) {
+      console.log('❌ Email already exists in localStorage:', email);
+      return false; // already exists
+    }
+    
     users[email] = { name, password };
     writeUsers(users);
     const newUser = { name, email };
     setUser(newUser);
+    console.log('✅ User created in localStorage successfully');
     return true;
   };
 
@@ -100,6 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setUser(null);
+    navigate('/');
   };
 
   return (

@@ -21,13 +21,30 @@ export default function Login() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const ok = await login(email.trim(), password);
-    if (!ok) {
-      setError("Invalid credentials or user not found");
-      toast({ title: "Sign in failed", description: "Invalid credentials or user not found" });
+    
+    // Validation
+    if (!email.trim()) {
+      setError("Email is required");
+      toast({ title: "Validation Error", description: "Please enter your email", variant: "destructive" });
       return;
     }
-    toast({ title: "Signed in", description: `Welcome back` });
+    if (!password) {
+      setError("Password is required");
+      toast({ title: "Validation Error", description: "Please enter your password", variant: "destructive" });
+      return;
+    }
+    
+    const ok = await login(email.trim(), password);
+    if (!ok) {
+      setError("Invalid email or password. Please check your credentials.");
+      toast({ 
+        title: "Sign in failed", 
+        description: "Invalid email or password. Don't have an account? Sign up instead.",
+        variant: "destructive"
+      });
+      return;
+    }
+    toast({ title: "Signed in", description: `Welcome back!` });
     navigate(from, { replace: true });
   };
 

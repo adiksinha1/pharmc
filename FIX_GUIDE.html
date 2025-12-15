@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pharmac - Complete Fix Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        header h1 { font-size: 32px; margin-bottom: 10px; }
+        header p { font-size: 16px; opacity: 0.9; }
+        .content { padding: 40px; }
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        .step ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        .step li {
+            margin-bottom: 8px;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #856404;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #155724;
+        }
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin: 10px 5px 10px 0;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background: #764ba2;
+        }
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .checklist label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .checklist input {
+            margin-right: 8px;
+        }
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Pharmac - Complete Fix Guide</h1>
+            <p>Follow these 4 steps to fix signup issues permanently</p>
+        </header>
+        
+        <div class="content">
+            <div class="warning">
+                <strong>⚠️ Important:</strong> Do NOT skip any steps! Follow them in order.
+            </div>
+
+            <div class="step">
+                <h2>STEP 1: Start MySQL Service (2 min)</h2>
+                <p><strong>This is the most important step!</strong></p>
+                <ol>
+                    <li>Find file: <code>1_RUN_THIS_FIRST_AS_ADMIN.bat</code></li>
+                    <li>RIGHT-CLICK on it</li>
+                    <li>Select: <strong>"Run as administrator"</strong></li>
+                    <li>Let it complete (don't close the window)</li>
+                    <li>When done, press any key to close</li>
+                </ol>
+                <p style="margin-top: 12px; color: #28a745;"><strong>✓ Or manually:</strong></p>
+                <ol style="margin-top: 8px;">
+                    <li>Press Windows Key</li>
+                    <li>Type: <code>services.msc</code></li>
+                    <li>Press Enter</li>
+                    <li>Find: <strong>MySQL80</strong></li>
+                    <li>Right-click → <strong>Start</strong></li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h2>STEP 2: Start the App Server (1 min)</h2>
+                <p>Open VS Code terminal and run:</p>
+                <div class="code">npm run dev</div>
+                <p style="margin-top: 12px;"><strong>Wait for this message to appear:</strong></p>
+                <div class="code" style="color: #90ee90;">✓ Using MySQL storage (mysql2)</div>
+                <p style="margin-top: 12px; color: #d32f2f;"><strong>If you see this instead:</strong></p>
+                <div class="code" style="color: #ff6b6b;">✗ falling back to JSON file storage</div>
+                <p style="margin-top: 8px;">→ Go back to STEP 1 and make sure MySQL is running!</p>
+            </div>
+
+            <div class="step">
+                <h2>STEP 3: Clear Browser Storage (1 min)</h2>
+                <ol>
+                    <li>Go to: <a href="http://localhost:5173/signup" target="_blank">http://localhost:5173/signup</a></li>
+                    <li>Press: <strong>F12</strong> (opens Developer Tools)</li>
+                    <li>Click: <strong>Console</strong> tab</li>
+                    <li>Copy and paste this:
+                        <div class="code">localStorage.clear(); sessionStorage.clear(); location.reload();</div>
+                    </li>
+                    <li>Press: <strong>Enter</strong></li>
+                    <li>Page will refresh automatically</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h2>STEP 4: Create Your Account (1 min)</h2>
+                <p>The form is now fresh and clean!</p>
+                <ol>
+                    <li>Fill in:
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li><strong>Name:</strong> testuser</li>
+                            <li><strong>Email:</strong> test123@example.com <span style="color: red;">← MUST be different!</span></li>
+                            <li><strong>Password:</strong> test123456</li>
+                        </ul>
+                    </li>
+                    <li>Click: <strong>"Create account"</strong> button</li>
+                    <li>You'll be redirected to dashboard</li>
+                </ol>
+                <div class="success" style="margin-top: 20px;">
+                    <strong>✅ SUCCESS!</strong> Your account is created and signup is working!
+                </div>
+            </div>
+
+            <div class="checklist">
+                <h3 style="margin-bottom: 15px;">📋 Pre-Signup Checklist</h3>
+                <label><input type="checkbox"> MySQL80 service is RUNNING (Status: Running)</label>
+                <label><input type="checkbox"> App server shows "Using MySQL storage (mysql2)"</label>
+                <label><input type="checkbox"> Browser localStorage is cleared</label>
+                <label><input type="checkbox"> Form fields are empty (name, email, password)</label>
+                <label><input type="checkbox"> Email is DIFFERENT from what you tried before</label>
+                <label><input type="checkbox"> Password is at least 6 characters</label>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ If you still get "email already registered" error:</strong>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>You didn't clear browser storage properly</li>
+                    <li>Go back to STEP 3 and try again</li>
+                    <li>Or use "Fresh Start" button on signup page</li>
+                </ol>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <h3>Ready?</h3>
+                <button class="button" onclick="window.location.href='file:///c:/Users/ADITYA/Downloads/dream-weaver-main%20(1)/Pharmac/1_RUN_THIS_FIRST_AS_ADMIN.bat'">
+                    ► Start: Run Batch File
+                </button>
+                <button class="button" onclick="window.location.href='http://localhost:5173/signup'">
+                    ► Go to Signup Page
+                </button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Pharmac Setup Guide | Last Updated: Dec 15, 2025</p>
+            <p style="margin-top: 10px; font-size: 12px; color: #999;">
+                If issues persist, check that MySQL is truly running by opening Services (services.msc)
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

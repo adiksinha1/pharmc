@@ -1,0 +1,148 @@
+# ========================================
+# COMPLETE MYSQL SETUP INSTRUCTIONS
+# ========================================
+# Follow these steps EXACTLY to fix your database issue
+# ========================================
+
+## STEP 1: START MYSQL SERVICE (REQUIRED!)
+========================================
+
+You have two options:
+
+### Option A: Using the Batch File (Easiest)
+1. Go to the database folder in Windows Explorer
+2. Find "START_MYSQL_ADMIN.bat"
+3. RIGHT-CLICK the file
+4. Select "Run as administrator"
+5. Wait for the message "SUCCESS! MySQL is now running"
+
+### Option B: Manual Start
+1. Press Windows Key
+2. Type "Services"
+3. Open "Services" app
+4. Find "MySQL80" in the list
+5. Right-click it and select "Start"
+
+IMPORTANT: MySQL MUST be running or nothing will work!
+
+
+## STEP 2: SETUP DATABASE IN MYSQL WORKBENCH
+========================================
+
+1. OPEN MySQL Workbench (from Start menu)
+
+2. CONNECT to MySQL:
+   - You should see "Pharmac Local" connection
+   - If not, click the + button and create:
+     * Connection Name: Pharmac Local
+     * Hostname: localhost
+     * Port: 3306
+     * Username: root
+   - Double-click to connect
+   - Enter your root password when prompted
+
+3. RUN THE SETUP SCRIPT:
+   - In MySQL Workbench, click File -> Open SQL Script
+   - Navigate to: database/setup-database-workbench.sql
+   - Click the lightning bolt icon (⚡) to execute
+   - You should see "Database setup completed successfully!"
+
+4. VERIFY TABLES ARE CREATED:
+   - In the left sidebar, click the refresh icon (🔄)
+   - Expand "pharmac_db" schema
+   - You should see these tables:
+     * users
+     * queries
+     * results
+     * agent_activities
+     * reports
+     * visual_insights
+
+
+## STEP 3: CONFIGURE ENVIRONMENT VARIABLES
+========================================
+
+1. In VS Code, find the file ".env.example"
+2. Copy it and rename to ".env"
+3. Edit the .env file:
+   - Change MYSQL_PASSWORD to your actual MySQL root password
+   - Save the file
+
+Example .env file:
+```
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_password_here
+MYSQL_DATABASE=pharmac_db
+MYSQL_SSL=false
+PORT=4000
+```
+
+
+## STEP 4: RESTART YOUR APPLICATION
+========================================
+
+1. In VS Code terminal, stop the current server (Ctrl+C)
+2. Restart the application:
+   ```
+   npm run dev
+   ```
+3. The server should now connect to MySQL successfully
+
+
+## TROUBLESHOOTING
+========================================
+
+### Problem: MySQL service won't start
+Solution:
+- Open Services (Windows Key + Services)
+- Find MySQL80
+- Right-click -> Properties
+- Check "Path to executable" is correct
+- Try "Restart" instead of "Start"
+- If still fails, reinstall MySQL
+
+### Problem: Can't connect in MySQL Workbench
+Solution:
+- Verify MySQL service is running (Services app)
+- Check your root password
+- Try resetting password using database/reset-mysql-password.bat
+
+### Problem: Tables still not showing
+Solution:
+- Make sure you ran setup-database-workbench.sql
+- Click refresh (🔄) in MySQL Workbench schemas panel
+- Try: DROP DATABASE pharmac_db; then run script again
+
+### Problem: Application still uses JSON file storage
+Solution:
+- Verify .env file exists and has correct password
+- Check server logs for "Using MySQL storage" message
+- Restart the node server completely
+
+
+## VERIFY EVERYTHING WORKS
+========================================
+
+1. MySQL service is RUNNING (check Services app)
+2. MySQL Workbench shows all 6 tables in pharmac_db
+3. .env file exists with correct password
+4. Server logs show "Using MySQL storage (mysql2)"
+5. You can signup/login successfully
+
+
+## QUICK CHECKLIST
+========================================
+☐ MySQL80 service is running
+☐ Connected to MySQL Workbench successfully
+☐ Ran setup-database-workbench.sql script
+☐ Can see all 6 tables in pharmac_db
+☐ Created .env file with correct password
+☐ Restarted the node server
+☐ Server logs show "Using MySQL storage"
+
+
+Need more help? Check:
+- database/MYSQL_SETUP_GUIDE.md
+- database/README.md

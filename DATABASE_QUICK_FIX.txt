@@ -1,0 +1,62 @@
+🚀 QUICK FIX FOR "NO TABLES" ISSUE
+=====================================
+
+Your MySQL is STOPPED. Follow these 3 steps:
+
+
+📍 STEP 1: START MYSQL (2 minutes)
+-----------------------------------
+1. Go to folder: database
+2. Find file: START_MYSQL_ADMIN.bat
+3. RIGHT-CLICK → "Run as administrator"
+4. Wait for "SUCCESS!" message
+
+   OR
+
+1. Press Windows Key + R
+2. Type: services.msc
+3. Find "MySQL80" → Right-click → Start
+
+
+📍 STEP 2: CREATE TABLES (2 minutes)
+-----------------------------------
+1. Open "MySQL Workbench" from Start menu
+2. Double-click "Pharmac Local" (or create connection to localhost:3306)
+3. Enter your root password
+4. Click: File → Open SQL Script
+5. Select: database/setup-database-workbench.sql
+6. Click the ⚡ lightning bolt icon
+7. Look for "Database setup completed successfully!"
+8. Click refresh 🔄 in left sidebar
+9. Expand "pharmac_db" → You should see 6 tables
+
+
+📍 STEP 3: CONNECT YOUR APP (1 minute)
+-----------------------------------
+1. Copy .env.example to .env
+2. Edit .env file, change this line:
+   MYSQL_PASSWORD=your_actual_mysql_password
+3. Save the file
+4. In terminal, restart server:
+   npm run dev
+
+
+✅ VERIFY IT WORKS
+-----------------------------------
+- MySQL Workbench shows all 6 tables ✓
+- Server logs say "Using MySQL storage (mysql2)" ✓
+- You can signup/login successfully ✓
+
+
+❌ STILL HAVING ISSUES?
+-----------------------------------
+Read: database/SETUP_INSTRUCTIONS.txt (detailed guide)
+
+
+🎯 THE REAL ISSUE
+-----------------------------------
+Your MySQL service is stopped. The app falls back to 
+JSON file storage when MySQL is not running. That's 
+why you can't see tables in MySQL Workbench.
+
+Solution: Keep MySQL service running!

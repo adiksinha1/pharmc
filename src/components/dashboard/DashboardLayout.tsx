@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -17,6 +17,7 @@ import {
   Sun,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { ParticleBackground } from "@/components/effects/ParticleBackground";
 
@@ -36,8 +37,32 @@ const navItems: NavItem[] = [
 
 export function DashboardLayout() {
   const [collapsed, setCollapsed] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+  const [isDark, setIsDark] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const location = useLocation();
+  let userName: string | null = null;
+  let doLogout: (() => void) | null = null;
+  try {
+    const { user, logout } = useAuth();
+    userName = user?.name ?? null;
+    doLogout = logout;
+  } catch {}
+
+  // Initialize theme from localStorage once on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const dark = saved ? saved === 'dark' : prefersDark;
+    setIsDark(dark);
+    document.documentElement.classList.toggle('dark', dark);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle('dark', next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+  };
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -61,26 +86,43 @@ export function DashboardLayout() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={toggleTheme}
               className="text-muted-foreground hover:text-foreground"
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground relative"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
-            </Button>
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground relative"
+                onClick={() => setShowNotifications(v => !v)}
+                title="Notifications"
+              >
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
+              </Button>
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-64 rounded-md border border-border bg-background/95 backdrop-blur-xl shadow-lg">
+                  <div className="p-3">
+                    <p className="text-sm text-muted-foreground">No notifications</p>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="w-px h-8 bg-border/50 mx-2 hidden md:block" />
             <Button variant="ghost" size="sm" className="gap-2 hidden md:flex">
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                 <User className="w-4 h-4 text-primary" />
               </div>
-              <span className="text-foreground">Dr. Smith</span>
+              <span className="text-foreground">{userName ?? "Guest"}</span>
             </Button>
+            {doLogout && (
+              <Button variant="outline" size="sm" onClick={() => doLogout?.()}>
+                Logout
+              </Button>
+            )}
           </div>
         </div>
       </header>

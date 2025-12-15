@@ -1,0 +1,111 @@
+========================================
+🔧 FIX: "Email Already Registered" Error
+========================================
+
+THE PROBLEM:
+------------
+Your email "dm@hna" is stored in your BROWSER's localStorage.
+Even though the server database is empty, the browser remembers it!
+
+
+INSTANT FIX (2 STEPS):
+========================================
+
+STEP 1: CLEAR BROWSER STORAGE
+------------------------------
+1. Open your web application in the browser
+2. Press F12 (or right-click → Inspect)
+3. Click the "Console" tab at the top
+4. Copy and paste this code:
+
+   localStorage.clear(); sessionStorage.clear(); location.reload();
+
+5. Press Enter
+6. The page will refresh automatically
+
+
+STEP 2: SIGNUP WITH NEW EMAIL
+------------------------------
+Now try signing up again with ANY email!
+✓ Use a fresh email address
+✓ Or use the same one - it's cleared now
+
+
+ALTERNATIVE METHOD:
+========================================
+If the above doesn't work:
+
+1. Press F12 in browser
+2. Click "Application" tab (or "Storage" in Firefox)
+3. Left side: expand "Local Storage"
+4. Click on "http://localhost:5173" (or your URL)
+5. Right-click → "Clear"
+6. Do the same for "Session Storage"
+7. Refresh page (F5)
+
+
+WHY THIS HAPPENS:
+========================================
+Your app has a fallback system:
+1. Try to connect to MySQL server
+2. If MySQL not available → use localStorage in browser
+
+Since MySQL service is STOPPED, the app saves users
+in your browser's localStorage. That's why you see
+"email already registered" - it's stored in your browser!
+
+
+PERMANENT FIX:
+========================================
+To use the real MySQL database:
+
+1. Start MySQL service:
+   → Run database\START_MYSQL_ADMIN.bat as Administrator
+   
+2. Setup database tables:
+   → Open MySQL Workbench
+   → Run database\setup-database-workbench.sql
+   
+3. Configure password:
+   → Edit .env file
+   → Set MYSQL_PASSWORD=your_password
+   
+4. Restart app:
+   → Stop server (Ctrl+C)
+   → Run: npm run dev
+   
+5. Look for this message:
+   "Using MySQL storage (mysql2)"
+   
+   If you see this instead:
+   "MySQL not configured/available, falling back to JSON"
+   Then it's using localStorage!
+
+
+QUICK TEST:
+========================================
+Check which storage your app is using:
+
+1. Stop the server (Ctrl+C in terminal)
+2. Look at the last startup logs
+3. You'll see either:
+   ✓ "Using MySQL storage (mysql2)" = Good!
+   ✗ "falling back to JSON file storage" = Using browser!
+
+
+CLEAR EVERYTHING NOW:
+========================================
+Run these commands in PowerShell:
+
+# Clear JSON file
+echo [] > "server\users.json"
+
+# Clear browser (open in Console, F12):
+localStorage.clear(); sessionStorage.clear();
+
+# Then refresh browser and try again!
+
+
+YOU'RE TRYING TO SIGNUP WITH: dm@hna
+This email IS in your browser localStorage.
+Just clear it using the steps above!

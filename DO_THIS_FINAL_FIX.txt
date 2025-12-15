@@ -1,0 +1,94 @@
+===========================================
+  🔥 FINAL FIX - DO THIS NOW 🔥
+===========================================
+
+Your MySQL root account has a password.
+The app can't connect without it.
+
+══════════════════════════════════════════
+  STEP 1: FIND YOUR MYSQL PASSWORD
+══════════════════════════════════════════
+
+Your MySQL root password is one of these:
+  • Empty (just press Enter)
+  • "root"
+  • "admin"  
+  • "password"
+  • Check MySQL Workbench saved connections
+
+══════════════════════════════════════════
+  STEP 2: UPDATE .env FILE
+══════════════════════════════════════════
+
+Open: .env file in VS Code
+
+Change this line:
+  MYSQL_PASSWORD=
+
+To (example if password is "root"):
+  MYSQL_PASSWORD=root
+
+Save the file (Ctrl+S)
+
+══════════════════════════════════════════
+  STEP 3: CLEAR MYSQL DATABASE
+══════════════════════════════════════════
+
+Open MySQL Workbench
+  → File → Open SQL Script
+  → Select: database/CLEAR_ALL_USERS.sql
+  → Click ⚡ lightning bolt to run
+  → ✅ Should say "0 rows affected"
+
+══════════════════════════════════════════
+  STEP 4: CLEAR BROWSER
+══════════════════════════════════════════
+
+In browser (http://localhost:8082/signup):
+  → Press F12
+  → Console tab
+  → Type: localStorage.clear(); location.reload();
+  → Press Enter
+
+══════════════════════════════════════════
+  STEP 5: RESTART SERVER
+══════════════════════════════════════════
+
+In VS Code terminal:
+  → Press Ctrl+C (stop server)
+  → Type: npm run dev
+  → Press Enter
+  → Look for: "Using MySQL storage (mysql2)"
+
+══════════════════════════════════════════
+  STEP 6: TEST SIGNUP
+══════════════════════════════════════════
+
+Go to: http://localhost:8082/signup
+  Email: fresh@example.com
+  Password: test123456
+  Name: Test User
+
+Click "Create account"
+  → Should redirect to /dashboard
+  → ✅ SUCCESS!
+
+══════════════════════════════════════════
+  TROUBLESHOOTING
+══════════════════════════════════════════
+
+If still getting "email already registered":
+  1. Did you clear MySQL? (Step 3)
+  2. Did you clear browser? (Step 4)
+  3. Did you restart server? (Step 5)
+  4. Are you using a NEW email?
+
+If server won't start:
+  • Run: Get-Process node | Stop-Process -Force
+  • Try: npm run dev again
+
+══════════════════════════════════════════
+
+📞 QUICK HELP: The issue is your emails are
+   stored in MySQL. You MUST delete them 
+   using MySQL Workbench (Step 3).

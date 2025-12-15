@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { AgentFramework } from "@/components/sections/AgentFramework";
 import { WorkflowSection } from "@/components/sections/WorkflowSection";
 import { DemoSection } from "@/components/sections/DemoSection";
 import { BenefitsSection } from "@/components/sections/BenefitsSection";
@@ -14,7 +13,6 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10">
         <HeroSection />
-        <AgentFramework />
         <WorkflowSection />
         <DemoSection />
         <BenefitsSection />

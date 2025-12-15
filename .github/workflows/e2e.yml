@@ -30,11 +30,14 @@ jobs:
         run: |
           nohup npm run start:server > server.log 2>&1 &
 
-      - name: Start frontend dev server
-        run: |
-          nohup npm run dev > client.log 2>&1 &
+      - name: Build frontend
+        run: npm run build
 
-      - name: Wait for frontend
+      - name: Start preview server
+        run: |
+          nohup npm run preview -- --port 8081 > client.log 2>&1 &
+
+      - name: Wait for frontend preview
         run: npx wait-on http://localhost:8081 || (sleep 1; npx wait-on http://localhost:8081)
 
       - name: Run Playwright tests
