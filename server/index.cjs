@@ -231,6 +231,240 @@ app.get("/api/analytics/sales-summary", async (req, res) => {
   }
 });
 
+// ============= COMPREHENSIVE DRUG SEARCH ENDPOINTS =============
+
+// Search drugs by name
+app.get("/api/drugs/search", async (req, res) => {
+  try {
+    const query = req.query.q || "";
+    if (!query.trim()) {
+      return res.json({ drugs: [], message: "Please enter a search term" });
+    }
+
+    if (db.query) {
+      const searchTerm = `%${query}%`;
+      const [drugs] = await db.query(
+        `SELECT * FROM drugs 
+         WHERE drug_name LIKE ? OR medical_condition LIKE ? 
+         LIMIT 50`,
+        [searchTerm, searchTerm]
+      );
+
+      if (drugs.length === 0) {
+        return res.json({ 
+          drugs: [], 
+          message: `No drugs found for "${query}". Try searching by condition or drug name.` 
+        });
+      }
+
+      return res.json({ 
+        drugs, 
+        count: drugs.length,
+        message: `Found ${drugs.length} drug(s) matching "${query}"` 
+      });
+    }
+
+    // Fallback: Search in medicines table
+    return res.json({ drugs: [], message: "Database not configured" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "server_error", message: e.message });
+  }
+});
+
+// Search by medical condition
+app.get("/api/drugs/condition", async (req, res) => {
+  try {
+    const condition = req.query.condition || "";
+    if (!condition.trim()) {
+      return res.json({ drugs: [], message: "Please specify a condition" });
+    }
+
+    if (db.query) {
+      const searchTerm = `%${condition}%`;
+      const [drugs] = await db.query(
+        `SELECT DISTINCT drug_name, medical_condition, rating, no_of_reviews, activity, rx_otc 
+         FROM drugs 
+         WHERE medical_condition LIKE ? 
+         ORDER BY rating DESC, no_of_reviews DESC
+         LIMIT 100`,
+        [searchTerm]
+      );
+
+      return res.json({ 
+        drugs, 
+        count: drugs.length,
+        condition: condition,
+        message: `Found ${drugs.length} drugs for treating "${condition}"` 
+      });
+    }
+
+    return res.json({ drugs: [], message: "Database not configured" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Search Indian medicines
+app.get("/api/medicines-india/search", async (req, res) => {
+  try {
+    const query = req.query.q || "";
+    if (!query.trim()) {
+      return res.json({ medicines: [], message: "Please enter a search term" });
+    }
+
+    if (db.query) {
+      const searchTerm = `%${query}%`;
+      const [medicines] = await db.query(
+        `SELECT * FROM medicines_india 
+         WHERE name LIKE ? OR manufacturer_name LIKE ? 
+         ORDER BY price ASC
+         LIMIT 50`,
+        [searchTerm, searchTerm]
+      );
+
+      return res.json({ 
+        medicines, 
+        count: medicines.length,
+        message: `Found ${medicines.length} medicine(s) in India database` 
+      });
+    }
+
+    return res.json({ medicines: [], message: "Database not configured" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Get drug details including reviews and ratings
+app.get("/api/drugs/:drugName", async (req, res) => {
+  try {
+    const drugName = req.params.drugName;
+
+    if (db.query) {
+      const [drugs] = await db.query(
+        `SELECT * FROM drugs WHERE drug_name = ?`,
+        [drugName]
+      );
+
+      if (drugs.length === 0) {
+        return res.status(404).json({ error: "not_found", message: "Drug not found" });
+      }
+
+      const [reviews] = await db.query(
+        `SELECT * FROM drug_reviews WHERE drug_name = ? LIMIT 10`,
+        [drugName]
+      );
+
+      return res.json({ 
+        drug: drugs[0], 
+        reviews: reviews || [],
+        avgRating: drugs[0].rating
+      });
+    }
+
+    return res.status(501).json({ error: "Database not configured" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Advanced search with filters
+app.get("/api/drugs/advanced-search", async (req, res) => {
+  try {
+    const { name, condition, minRating, rxOtc } = req.query;
+
+    if (db.query) {
+      let query = "SELECT * FROM drugs WHERE 1=1";
+      const params = [];
+
+      if (name) {
+        query += " AND drug_name LIKE ?";
+        params.push(`%${name}%`);
+      }
+
+      if (condition) {
+        query += " AND medical_condition LIKE ?";
+        params.push(`%${condition}%`);
+      }
+
+      if (minRating) {
+        query += " AND rating >= ?";
+        params.push(parseFloat(minRating));
+      }
+
+      if (rxOtc) {
+        query += " AND rx_otc = ?";
+        params.push(rxOtc);
+      }
+
+      query += " ORDER BY rating DESC LIMIT 100";
+
+      const [drugs] = await db.query(query, params);
+
+      return res.json({ 
+        drugs, 
+        count: drugs.length,
+        filters: { name, condition, minRating, rxOtc }
+      });
+    }
+
+    return res.json({ drugs: [], message: "Database not configured" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Get top rated drugs
+app.get("/api/drugs/top-rated", async (req, res) => {
+  try {
+    const limit = req.query.limit || 10;
+
+    if (db.query) {
+      const [drugs] = await db.query(
+        `SELECT DISTINCT drug_name, medical_condition, rating, no_of_reviews, activity, rx_otc 
+         FROM drugs 
+         WHERE rating IS NOT NULL AND rating > 0
+         ORDER BY rating DESC, no_of_reviews DESC 
+         LIMIT ?`,
+        [parseInt(limit)]
+      );
+
+      return res.json({ 
+        drugs, 
+        count: drugs.length,
+        message: `Top ${limit} rated drugs` 
+      });
+    }
+
+    return res.json({ drugs: [], message: "Database not configured" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Get pharma companies
+app.get("/api/pharma-companies", async (req, res) => {
+  try {
+    if (db.query) {
+      const [companies] = await db.query(
+        "SELECT * FROM pharma_companies ORDER BY company_name LIMIT 100"
+      );
+      return res.json({ companies, count: companies.length });
+    }
+
+    return res.json({ companies: [], message: "Database not configured" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "server_error" });
+  }
+});
+
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`Mock auth server running on http://localhost:${port}`);

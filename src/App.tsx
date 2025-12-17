@@ -19,6 +19,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { AuthProvider } from "./hooks/useAuth";
 import PharmacyData from "./pages/dashboard/PharmacyData";
+import { DrugSearchPage } from "./pages/DrugSearch";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/framework" element={<Framework />} />
           <Route path="/demo" element={<Demo />} />
+          <Route path="/drugs" element={<DrugSearchPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           

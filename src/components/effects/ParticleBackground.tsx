@@ -65,21 +65,7 @@ export function ParticleBackground() {
         ctx.fillStyle = `hsla(173, 80%, 40%, ${particle.opacity})`;
         ctx.fill();
 
-        // Draw connections to nearby particles
-        particlesRef.current.slice(i + 1).forEach((other) => {
-          const dx = particle.x - other.x;
-          const dy = particle.y - other.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 150) {
-            ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(other.x, other.y);
-            ctx.strokeStyle = `hsla(173, 80%, 40%, ${0.1 * (1 - distance / 150)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        });
       });
 
       animationRef.current = requestAnimationFrame(animate);

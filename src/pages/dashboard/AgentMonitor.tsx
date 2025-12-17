@@ -340,44 +340,6 @@ export default function AgentMonitor() {
 
       {/* Agent Flow Visualization */}
       <div className="relative">
-        {/* Connection Lines SVG */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-0 hidden lg:block"
-          style={{ minHeight: "400px" }}
-        >
-          <defs>
-            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(173, 80%, 40%)" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="hsl(173, 80%, 40%)" stopOpacity="0.1" />
-            </linearGradient>
-          </defs>
-          {/* Lines from master to agents - simplified */}
-          {[0, 1, 2, 3].map((i) => (
-            <line
-              key={i}
-              x1="50%"
-              y1="80"
-              x2={`${15 + i * 23}%`}
-              y2="200"
-              stroke="url(#lineGradient)"
-              strokeWidth="2"
-              className={isRunning ? "animate-flow" : ""}
-            />
-          ))}
-          {[4, 5, 6, 7].map((i) => (
-            <line
-              key={i}
-              x1="50%"
-              y1="80"
-              x2={`${15 + (i - 4) * 23}%`}
-              y2="420"
-              stroke="url(#lineGradient)"
-              strokeWidth="2"
-              className={isRunning ? "animate-flow" : ""}
-            />
-          ))}
-        </svg>
-
         {/* Agent Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10 mt-4">
           {agents.map((agent, index) => (

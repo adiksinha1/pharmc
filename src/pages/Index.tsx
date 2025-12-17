@@ -5,6 +5,7 @@ import { DemoSection } from "@/components/sections/DemoSection";
 import { BenefitsSection } from "@/components/sections/BenefitsSection";
 import { Footer } from "@/components/layout/Footer";
 import { ParticleBackground } from "@/components/effects/ParticleBackground";
+import { ChatbotWidget } from "@/components/ChatbotWidget";
 
 const Index = () => {
   return (
@@ -18,6 +19,7 @@ const Index = () => {
         <BenefitsSection />
       </main>
       <Footer />
+      <ChatbotWidget />
     </div>
   );
 };
