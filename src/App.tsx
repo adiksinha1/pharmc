@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Demo from "./pages/Demo";
 import Framework from "./pages/Framework";
+import Workflow from "./pages/Workflow";
 import NotFound from "./pages/NotFound";
 import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 import RequireAuth from "./components/RequireAuth";
@@ -33,6 +34,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/framework" element={<Framework />} />
+          <Route path="/workflow" element={<Workflow />} />
           <Route path="/demo" element={<Demo />} />
           <Route path="/drugs" element={<DrugSearchPage />} />
           <Route path="/login" element={<Login />} />

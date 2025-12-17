@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +30,8 @@ import {
   Line,
   Legend,
 } from "recharts";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 const marketData = [
   { year: "2020", market: 2.8, growth: 5.2 },
@@ -110,6 +112,7 @@ const topOpportunities = [
 
 export default function VisualInsights() {
   const [activeTab, setActiveTab] = useState("market");
+  const chartsContainerRef = useRef<HTMLDivElement>(null);
 
   const tabs = [
     { id: "market", label: "Market", icon: <TrendingUp className="w-4 h-4" /> },
@@ -117,6 +120,59 @@ export default function VisualInsights() {
     { id: "clinical", label: "Clinical", icon: <Activity className="w-4 h-4" /> },
     { id: "opportunities", label: "Opportunities", icon: <Target className="w-4 h-4" /> },
   ];
+
+  const handleExportPDF = async () => {
+    if (!chartsContainerRef.current) return;
+
+    try {
+      const canvas = await html2canvas(chartsContainerRef.current, {
+        backgroundColor: "rgba(10, 10, 20, 1)",
+        scale: 2,
+      });
+
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pdf = new jsPDF({
+        orientation: imgHeight > imgWidth ? "portrait" : "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // Add title page
+      pdf.setFontSize(24);
+      pdf.setTextColor(0, 212, 170);
+      pdf.text("Visual Insights Report", pageWidth / 2, 30, { align: "center" });
+
+      pdf.setFontSize(12);
+      pdf.setTextColor(156, 163, 175);
+      pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, pageWidth / 2, 40, {
+        align: "center",
+      });
+
+      pdf.addPage();
+
+      // Add charts
+      const imgData = canvas.toDataURL("image/png");
+      while (heightLeft >= 0) {
+        pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
+        heightLeft -= pageHeight;
+        position = heightLeft - imgHeight;
+        if (heightLeft > 0) {
+          pdf.addPage();
+        }
+      }
+
+      pdf.save("visual-insights-report.pdf");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      alert("Error exporting PDF. Please try again.");
+    }
+  };
 
   return (
     <div className="p-6 space-y-6 animate-fade-in">
@@ -137,7 +193,7 @@ export default function VisualInsights() {
             Filter
             <ChevronDown className="w-4 h-4" />
           </Button>
-          <Button variant="glow" className="gap-2">
+          <Button variant="glow" className="gap-2" onClick={handleExportPDF}>
             <Download className="w-4 h-4" />
             Export Charts
           </Button>
@@ -158,6 +214,9 @@ export default function VisualInsights() {
           </Button>
         ))}
       </div>
+
+      {/* Charts Container for Export */}
+      <div ref={chartsContainerRef} className="bg-background p-8 rounded-lg">
 
       {/* Market Tab */}
       {activeTab === "market" && (
@@ -444,6 +503,7 @@ export default function VisualInsights() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

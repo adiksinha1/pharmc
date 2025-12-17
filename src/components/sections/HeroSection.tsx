@@ -59,7 +59,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-300">
             <Link to="/dashboard">
               <Button variant="glow" size="xl">
-                Try Demo
+                Get Started
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
